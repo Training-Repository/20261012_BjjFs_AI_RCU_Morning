@@ -1,341 +1,421 @@
-# Copilot Chat for Excel — Participant Exercise Guide
-### Formulas & Pivot Tables for Risk Containment Unit (RCU)
+# Excel with Copilot Chat — No Agent Required
+### Formulas & Pivot Tables for the Risk Containment Unit (RCU), using Copilot Chat + Meta-Prompting
 **Bajaj Finance Limited | M365 Copilot Training**
 **File:** `BFL_RCU_Copilot_Demo.xlsx`
-**Mode:** Copilot Chat (no Microsoft 365 Copilot licence required)
+**Companion guides:** `MetaPrompting_Guide_RCU_BFL.md` · `BFL_RCU_CopilotExcel_Participant_Guide.md` (Agent version)
+
+---
+
+## Who This Guide Is For
+
+`BFL_RCU_CopilotExcel_Participant_Guide.md` uses **Edit with Copilot** in Excel, which used to be called Agent Mode. In that mode Copilot writes formulas into your cells and builds pivot tables for you, and it needs a **paid Microsoft 365 Copilot licence**.
+
+This guide produces **the same eight results** with **Copilot Chat only**:
+
+- **Copilot does the thinking.** It writes the formula, explains the logic and gives you the pivot layout.
+- **You do the clicking.** You paste the formula and build the pivot in Excel yourself, which takes about 30 seconds per exercise.
+
+### Which one do you have?
+
+Check the label on Copilot in the Microsoft 365 app or in Excel:
+
+| Label you see | What works for you |
+|---|---|
+| **Microsoft 365 Copilot (Premium / Pro)** | Either guide. The Agent guide is faster. |
+| **Microsoft 365 Copilot (Basic)** | **This guide.** You can run the prompts in Copilot Chat **or** in the Copilot pane inside Excel, but Copilot will not edit the workbook for you. |
+| **Copilot Chat (Basic)** | **This guide**, using Copilot Chat in the M365 Copilot app or at `m365copilot.com`. |
+
+---
+
+## How Every Exercise Works
+
+```
+Step 1 → Paste the Excel Meta Prompt with that exercise's TASK filled in
+Step 2 → Read the Working Prompt Copilot generates
+Step 3 → Attach BFL_RCU_Copilot_Demo.xlsx and run the Working Prompt
+Step 4 → Apply Copilot's answer in Excel yourself (paste formula / build pivot)
+Step 5 → Verify against the expected numbers in this guide
+```
+
+> 💡 **Why Step 5 matters:** without an agent, nobody checks the result but you. The expected numbers below let you spot a wrong formula in seconds.
 
 ---
 
 ## Before You Begin
 
-### What You Need
-- **Excel** open with `BFL_RCU_Copilot_Demo.xlsx`
-- **Copilot Chat** open in a second window — either:
-  - `https://copilot.cloud.microsoft` (M365 Copilot Chat, work account), or
-  - The **Copilot** button in Microsoft Edge, or
-  - The Copilot app in Windows / Teams
-- Both windows side by side (**Win + ←** and **Win + →**) — you will be switching constantly
+1. Open `BFL_RCU_Copilot_Demo.xlsx` in **Excel** (desktop or web) and go to the **RCU Case Log** sheet.
+2. Open **Copilot Chat** in a second window, either the M365 Copilot app or `m365copilot.com`.
+3. Keep both windows side by side.
 
-### How This Session Works
-Copilot Chat is **not connected to your workbook.** It cannot insert formulas, build pivot tables, or change anything in Excel. It can *write* everything for you — you paste it in.
+### What's in the file
 
-Every exercise follows the same **two-step rhythm**:
+- Row 1 is a title and **row 2 holds the headers**. **Data runs in rows 3–27** (25 cases, RCU-001 to RCU-025). Rows 28–29 are a blank row and a note.
+- Columns **Q–T already have headers** (`➕ Breach Flag`, `➕ Risk Score Band`, `➕ Pending Days`, `➕ Resolution Category`) and empty cells below them. You will fill those cells.
+- ⚠️ **Case Received Date (J) and Case Closed Date (K) are stored as text**, for example `2 Jun 2026`, not as real Excel dates. This matters in Exercise 3.
+- The workbook has a single sheet. **Build your own pivots on a new sheet** and check them against the expected results in this guide.
 
-| Step | Where | What You Do |
-|------|-------|-------------|
-| **1. Ask** | Copilot Chat | Paste the prompt, get the formula or the steps |
-| **2. Apply** | Excel | Paste into the cell, press Enter, fill down |
-
-> **Key habit:** Because Chat cannot see your file, **you** must describe the file. That is the entire skill this session teaches — and it is the same skill that makes every other AI tool work well.
-
-**The sheet:** headers are in **row 2**; data runs **row 3 to row 27** (25 cases). Real data occupies columns **A–P**; columns **Q–T are empty** — you will fill these using Copilot Chat.
-
----
-
-## Step 0 — Set the Context (do this once)
-
-Open Copilot Chat and paste this **first**. Everything after it can be short, because Chat now knows your sheet.
-
-```
-I'm working in Excel on an RCU (Risk Containment Unit) case log. You can't
-see the file, so here is the layout:
-
-Headers are in row 2. Data runs from row 3 to row 27 (25 case rows).
-
-A  Case ID              (text, e.g. RCU-001)
-B  Branch Name          (text)
-C  Branch Code          (text)
-D  Zone                 (West / Central)
-E  Case Type            (Pre-Disbursement Verification, Fraud Investigation,
-                         Document Verification, Address Verification,
-                         Employment Verification, Reference Check)
-F  Applicant Name       (text)
-G  Product              (Personal Loan, Home Loan, Business Loan, Gold Loan,
-                         Two-Wheeler Loan)
-H  Loan Amount (₹)      (number)
-I  Case Owner           (text)
-J  Case Received Date   (date)
-K  Case Closed Date     (date, blank if the case is still open)
-L  TAT (Days)           (number, blank if still open)
-M  TAT Benchmark (Days) (number)
-N  Customer Segment     (Retail, SME, Corporate, HNI)
-O  Risk Level           (Low, Medium, High, Critical)
-P  Status               (Cleared, Pending, Escalated)
-Q to T are empty — I'll be adding calculated columns there.
-
-For the rest of this conversation: when I ask for a formula, give me the
-formula for the FIRST data row (row 3), ready to paste and fill down.
-Give me the formula on its own line, then a one-line explanation. No long
-preamble.
-```
-
-> **Trainer note:** This single block is the difference between five sharp answers and five vague ones. Keep it visible on screen — participants will refer back to it.
+| Column | Field | Column | Field |
+|---|---|---|---|
+| A | Case ID | I | Case Owner |
+| B | Branch Name | J | Case Received Date |
+| C | Branch Code | K | Case Closed Date *(blank if open)* |
+| D | Zone | L | TAT (Days) *(blank if open)* |
+| E | Case Type | M | TAT Benchmark (Days) |
+| F | Applicant Name | N | Customer Segment |
+| G | Product | O | Risk Level (Low / Medium / High / Critical) |
+| H | Loan Amount (₹) | P | Status (Cleared / Pending / Escalated) |
+| Q–T | **You fill these** | | |
 
 ---
 
-## Exercise 1 — Breach Flag (Column Q)
+## ⚡ The Excel Meta Prompt — Your Starting Point
 
-**What this does:** Flags each case as **"Breach"** or **"On Time"** by comparing actual TAT against the benchmark. Cases still open are flagged **"Pending"**.
+This follows the RTCFT pattern from `MetaPrompting_Guide_RCU_BFL.md`, adapted for Excel. The file layout is already filled in, so for each exercise you only replace **[TASK]**.
 
-### Step 1 — Ask (Copilot Chat)
 ```
-Write a formula for cell Q3 that checks whether a case breached its TAT
-benchmark. Compare TAT (column L) against the TAT Benchmark (column M):
-- "Breach" if TAT is greater than the Benchmark
-- "On Time" otherwise
-- "Pending" if TAT is blank (case still open)
-Handle the blank check first.
+Act as a Microsoft Copilot prompt expert specialising in Excel for a risk containment unit.
+
+Role:    I am an RCU (Risk Containment Unit) Analyst at Bajaj Finance Limited. I use Copilot
+         Chat, which cannot edit my workbook — I will apply the result in Excel myself.
+Task:    I need to: [TASK]
+Context: Sheet "RCU Case Log" in BFL_RCU_Copilot_Demo.xlsx.
+         Headers are in row 2; data is in rows 3 to 27 (25 cases).
+         Columns: A Case ID, B Branch Name, D Zone, E Case Type, I Case Owner,
+         J Case Received Date, K Case Closed Date, L TAT (Days), M TAT Benchmark (Days),
+         N Customer Segment, O Risk Level, P Status.
+         Dates in J and K are stored as TEXT like "2 Jun 2026". Open cases have blank K and L.
+Format:  The prompt must ask Copilot for:
+         1. The exact result (formula for row 3, or pivot/table layout) ready to copy
+         2. Step-by-step instructions to apply it manually in Excel
+         3. How to handle blanks and text dates
+         4. A quick way to verify the result is correct
+Tone:    Clear and step-by-step, for an RCU user who is not an Excel expert.
+
+Write me a detailed, ready-to-use Copilot prompt I can use in Copilot Chat with this file attached.
 ```
-**Expected output:**
+
+> ✏️ **Short on time?** Once you've done this for Exercise 1, you can reuse the Working Prompt Copilot gave you and swap in the new task for the later exercises.
+
+---
+
+---
+
+# Exercise 1 — Formula Column: Breach Flag (Q)
+**Time:** ~8 minutes
+
+### Step 1 — [TASK] to paste into the Meta Prompt
+```
+write a formula for column Q ("Breach Flag") that returns "Pending" if TAT (L) is blank,
+"Breach" if TAT is greater than the TAT Benchmark (M), otherwise "On Time", for rows 3 to 27
+```
+
+### Step 2 — Check the Working Prompt
+- [ ] Does it mention row 3 and filling down to row 27?
+- [ ] Does it ask for manual steps and a verification check?
+
+### Step 3 — Attach the file and run
+Attach `BFL_RCU_Copilot_Demo.xlsx` → paste the Working Prompt → send.
+
+### Step 4 — Apply in Excel
+1. Click **Q3** and paste the formula Copilot gave you.
+2. Fill it down to **Q27**: select **Q3:Q27** and press **Ctrl + D**, or double-click the fill handle at the bottom-right corner of Q3.
+
+### Step 5 — Verify
+Type this in any empty cell, such as **W3**:
+```excel
+=COUNTIF(Q3:Q27,"Breach")
+```
+**Expected: 13 Breach · 5 On Time · 7 Pending.**
+- **Why 7 Pending when column P shows only 6?** RCU-006 is *Escalated* but still open, so its TAT is blank too.
+- **11 of the 13 breaches are in the West zone** and 2 are in Central.
+
+<details><summary>Reference formula (open only if stuck)</summary>
+
 ```excel
 =IF(L3="","Pending",IF(L3>M3,"Breach","On Time"))
 ```
+</details>
 
-### Step 2 — Apply (Excel)
-1. Click **Q2** → type `Breach Flag` → Enter
-2. Click **Q3** → paste the formula → Enter
-3. Select **Q3**, double-click the fill handle (bottom-right corner) to fill down to **Q27** *(or select Q3:Q27 and press **Ctrl + D**)*
-
-> **Try this:** Ask Copilot Chat — *"What happens if I don't check for the blank first?"* It will explain that a blank cell counts as 0, so every open case would wrongly read "On Time". This is the single most common formula bug in real RCU trackers.
+> **Discussion Point:** Which case types dominate the 13 breaches? All five closed Fraud Investigation cases are among them. What makes fraud reviews run so far past a 5-day benchmark?
 
 ---
 
-## Exercise 2 — Risk Score Band (Column R)
+# Exercise 2 — Formula Column: Risk Score Band (R)
+**Time:** ~6 minutes
 
-**What this does:** Converts the text **Risk Level** (column O) into a **numeric score band** — useful for sorting, filtering, and prioritisation in reports.
+### Step 1 — [TASK]
+```
+write a formula for column R ("Risk Score Band") that converts Risk Level (O) into a number:
+"Critical" = 4, "High" = 3, "Medium" = 2, "Low" = 1, any other value = 0, for rows 3 to 27
+```
 
-### Step 1 — Ask (Copilot Chat)
+### Steps 2–4
+Same as Exercise 1, but paste in **R3** and fill down to **R27**.
+
+### Step 5 — Verify
+```excel
+=SUM(R3:R27)
 ```
-Write a formula for cell R3 that converts the Risk Level in column O into a
-numeric score band:
-- "Critical" = 4
-- "High" = 3
-- "Medium" = 2
-- "Low" = 1
-- any other value = 0
-```
-**Expected output:**
+**Expected: 54.**
+- By band: **4 cases score 4** (Critical), **5 score 3** (High), **7 score 2** (Medium), **9 score 1** (Low).
+- Check one band: `=COUNTIF(R3:R27,4)` returns **4**, which is RCU-006, 010, 016 and 021.
+
+<details><summary>Reference formula</summary>
+
 ```excel
 =IF(O3="Critical",4,IF(O3="High",3,IF(O3="Medium",2,IF(O3="Low",1,0))))
 ```
+</details>
 
-### Step 2 — Apply (Excel)
-1. **R2** → `Risk Score Band`
-2. **R3** → paste → Enter → fill down to **R27**
-
-> **Try this:** Ask Chat — *"What does this return if the Risk Level cell is blank or misspelt?"* It will point out the final `0` catch-all — so a stray "Hgh" silently scores 0 and quietly drops down any risk-sorted report. Worth knowing before you sort on it.
-
-> **Bonus prompt:** *"Rewrite this using IFS, and again using SWITCH."* Three ways to write the same mapping — compare which reads cleanest for a text-to-number lookup.
+> 💡 **Why a number?** A numeric band can be sorted and filtered, so Critical cases rise to the top of any report.
 
 ---
 
-## Exercise 3 — Pending Days (Column S)
+# Exercise 3 — Formula Column: Pending Days (S) ⚠️ the text-date trap
+**Time:** ~10 minutes
 
-**What this does:** For cases still **open**, calculates how many days they have been waiting since they were received. Closed cases return 0.
+### Step 1 — [TASK]
+```
+write a formula for column S ("Pending Days") that returns 0 if the case is closed
+(Case Closed Date K is not blank), otherwise the number of days from the Case Received
+Date (J) to today. Remember J is stored as text like "2 Jun 2026". Rows 3 to 27.
+```
 
-### Step 1 — Ask (Copilot Chat)
-```
-Write a formula for cell S3 that shows how many days a case has been
-pending. If the case has closed (column K has a date), return 0. If it is
-still open, return the number of days from Case Received Date (column J) to
-today.
-```
-**Expected output:**
+### Steps 2–4
+Paste in **S3** and fill down to **S27**.
+
+### Step 5 — Verify
+- **18 rows show 0**, one for each closed case.
+- **7 rows show a number of days**: RCU-003, 006, 008, 011, 017, 019, 023.
+  - On 12 Oct 2026, those values range from **131 to 138** days.
+  - They go up by one each day, because the formula uses `TODAY()`.
+- Check one row yourself. RCU-006 was received on 27 May 2026, so this should match **S8**:
 ```excel
-=IF(K3<>"",0,TODAY()-J3)
+=TODAY()-DATE(2026,5,27)
 ```
 
-### Step 2 — Apply (Excel)
-1. **S2** → `Pending Days`
-2. **S3** → paste → Enter → fill down to **S27**
+### ❗ If you see `#VALUE!` on the open rows
+Your Excel could not read the text date. This depends on your regional settings. Tell Copilot:
+```
+The formula returns #VALUE! for open rows because DATEVALUE cannot read "2 Jun 2026" in my
+regional settings. Give me a version that builds the date from the text without DATEVALUE.
+```
 
-> **This one breaks — on purpose.** In this training file the dates in column J are stored as **text**, so the formula above returns **#VALUE!**. That's the lesson. Go back to Chat and ask:
-> ```
-> My Case Received Date in column J is stored as text, not a real date.
-> Rewrite the S3 formula to handle that.
-> ```
-> You'll get `=IF(K3<>"",0,TODAY()-DATEVALUE(J3))`. Paste it, fill down — now cleared/escalated cases with a closed date show 0 and open cases show a real day count. If a result shows as a **date** instead of a number, select **S3:S27 → Home → Number Format → Number**.
+<details><summary>Reference formulas</summary>
+
+Try this first. It works in most English regional settings:
+```excel
+=IF(K3<>"",0,TODAY()-DATEVALUE(J3))
+```
+This version works in any regional setting:
+```excel
+=IF(K3<>"",0,TODAY()-DATE(RIGHT(J3,4),MATCH(MID(J3,FIND(" ",J3)+1,3),{"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"},0),LEFT(J3,FIND(" ",J3)-1)))
+```
+If the result shows as a date instead of a number, set the column format to **Number**.
+</details>
+
+> **Lesson:** Copilot's first formula is a *draft*. When a formula errors, don't fix it by hand. Paste the error back into Copilot Chat along with the reason.
+
+> **Discussion Point:** Which open cases have waited the longest? Are they concentrated in one owner, branch or case type? Four of the seven are Document Verification or Address Verification cases that look routine, yet they have waited over four months.
 
 ---
 
-## Exercise 4 — Resolution Category (Column T)
+# Exercise 4 — Formula Column: Resolution Category (T)
+**Time:** ~6 minutes
 
-**What this does:** Classifies each closed case by **how quickly it was resolved** relative to its TAT benchmark — giving RCU a performance quality label for every case.
+### Step 1 — [TASK]
+```
+write a formula for column T ("Resolution Category") that returns: "Pending" if TAT (L) is blank;
+"Fast" if TAT is 50% or less of the TAT Benchmark (M); "Within TAT" if TAT is within the Benchmark;
+"Moderate Breach" if TAT exceeds the Benchmark by up to 50%; "Critical Breach" if more than 50%.
+Rows 3 to 27.
+```
 
-### Step 1 — Ask (Copilot Chat)
-```
-Write a formula for cell T3 that classifies each RCU case by how the actual
-TAT (column L) compares to the TAT Benchmark (column M):
-- "Fast" if TAT is 50% or less of the Benchmark
-- "Within TAT" if it is within the Benchmark
-- "Moderate Breach" if it exceeds the Benchmark by up to 50%
-- "Critical Breach" if it exceeds the Benchmark by more than 50%
-- "Pending" if TAT is blank
-```
-**Expected output:**
+### Steps 2–4
+Paste in **T3** and fill down to **T27**.
+
+### Step 5 — Verify
+**Expected: 5 Within TAT · 6 Moderate Breach · 7 Critical Breach · 7 Pending · 0 Fast.**
+- The 7 Critical Breaches are RCU-002, 005, 010, 013, 016, 021 and 024. Five of them are Fraud Investigation cases.
+
+> 💡 **Zero "Fast" is correct.** No case closed in half its benchmark or less. An empty category doesn't mean the formula is wrong, so always check against the data.
+
+<details><summary>Reference formula</summary>
+
 ```excel
 =IF(L3="","Pending",IF(L3<=M3*0.5,"Fast",IF(L3<=M3,"Within TAT",IF(L3<=M3*1.5,"Moderate Breach","Critical Breach"))))
 ```
-
-### Step 2 — Apply (Excel)
-1. **T2** → `Resolution Category`
-2. **T3** → paste → Enter → fill down to **T27**
-
-> **Bonus prompt:** *"Rewrite this using IFS instead of nested IFs."* Compare the two — which one would you rather hand a colleague to maintain?
+</details>
 
 ---
 
-## Exercise 5 — Ask Copilot Chat to Explain a Formula
+# Exercise 5 — Ask Copilot to Explain a Formula
+**Time:** ~3 minutes
 
-### Your Turn
-Copy the formula from cell **T3** in Excel and paste it into Copilot Chat with:
+This works exactly as it does in the Agent version. No meta prompt or attachment is needed.
+
+Copy the formula from **T3** and paste it into Copilot Chat:
 ```
-Explain this formula to me in simple terms. What does each part do, and in
-what order does it evaluate?
-
-=IF(L3="","Pending",IF(L3<=M3*0.5,"Fast",IF(L3<=M3,"Within TAT",IF(L3<=M3*1.5,"Moderate Breach","Critical Breach"))))
+Explain this Excel formula in simple terms for an RCU user. What does each part
+do, and in what order are the conditions checked?
+[paste formula here]
 ```
-### What Copilot Chat Will Explain
-> *"It reads the TAT in L3 top down. Blank → still Pending. At most half the benchmark → Fast. Within the full benchmark → Within TAT. Over benchmark but not by more than 50% → Moderate Breach. Beyond 150% of benchmark → Critical Breach. Each IF only runs when the one before it was false, so the tightest band is tested first."*
 
-> **This works on any formula.** Take the ugliest formula from your own live tracker, paste it in, and ask the same question. This is the single highest-value habit from the whole session.
+**What to look for:**
+- The explanation should state that the conditions are checked **in order**.
+- Each `IF` only runs if the one before it was not true.
 
 ---
 
-## Exercise 6 — Pivot Table: Cases by Case Type and Status
+# Exercise 6 — Pivot Table: Cases by Case Type and Status
+**Time:** ~8 minutes
 
-**What this does:** Shows which **types of RCU cases** have the most unresolved or escalated work — helping the team prioritise where to focus.
-
-Copilot Chat **cannot build the pivot for you.** It will give you the click-path — you build it. Two minutes, and you will never need to look it up again.
-
-### Step 1 — Ask (Copilot Chat)
+### Step 1 — [TASK]
 ```
-Give me step-by-step instructions to build a PivotTable in Excel from the
-range A2:T27 on this sheet, showing the count of cases for each Case Type,
-broken down by Status. I want to see which case types have the most
-unresolved or escalated work. Tell me exactly which field goes into which
-area.
+design a pivot table showing the count of cases for each Case Type (rows) broken down by
+Status (columns: Cleared, Pending, Escalated). Give me the exact field placement and
+click-by-click steps to build it in Excel, plus the expected result table so I can check my pivot.
 ```
-### Step 2 — Apply (Excel)
-1. Click any cell inside your data
-2. **Insert → PivotTable → From Table/Range** → confirm the range → **New Worksheet** → OK
-3. Drag fields into the areas:
-   - **Rows:** Case Type
-   - **Columns:** Status
-   - **Values:** Case ID *(defaults to Count — correct here)*
 
-### No-Pivot Alternative
-```
-Instead of a PivotTable, give me a COUNTIFS formula that counts cases for a
-given Case Type and Status, so I can build a small summary grid manually.
-```
-`=COUNTIFS($E$3:$E$27,$V3,$P$3:$P$27,W$2)` — Case Types down the side, Statuses across the top.
+### Steps 2–3
+Run the Working Prompt with the file attached, as before.
 
-> **Discussion Point:** Which case type has the highest escalation rate? Why do you think Fraud Investigations take longer than other types?
+### Step 4 — Build it in Excel
+1. On **RCU Case Log**, select **A2:T27** exactly. Don't include the title in row 1 or the note rows below the data.
+2. Go to **Insert → PivotTable → New Worksheet → OK**.
+3. Place the fields:
+   - **Case Type** → Rows
+   - **Status** → Columns
+   - **Case ID** → Values. It shows as *Count of Case ID*.
+
+### Step 5 — Verify
+
+| Case Type | Cleared | Escalated | Pending | Total |
+|---|---|---|---|---|
+| Address Verification | 3 | | 1 | 4 |
+| Document Verification | 1 | | 3 | 4 |
+| Employment Verification | 3 | | 1 | 4 |
+| Fraud Investigation | 2 | 4 | | 6 |
+| Pre-Disbursement Verification | 4 | | | 4 |
+| Reference Check | 2 | | 1 | 3 |
+| **Grand Total** | **15** | **4** | **6** | **25** |
+
+*Excel sorts rows and columns alphabetically by default, so your order may differ from the list in the Agent guide.*
+
+> **Discussion Point:** All 4 Escalated cases are Fraud Investigations, and 3 of the 4 Document Verification cases are still pending. Where is the backlog forming, and is it the same reason in both?
 
 ---
 
-## Exercise 7 — Pivot Table: Average TAT by Case Owner
+# Exercise 7 — Pivot Table: Average TAT by Case Owner
+**Time:** ~8 minutes
 
-**What this does:** Shows which **RCU officers** are taking the longest to resolve cases — and which **case types** drive the highest TAT per officer.
-
-### Step 1 — Ask (Copilot Chat)
+### Step 1 — [TASK]
 ```
-Now give me the steps for a second PivotTable showing the average TAT in
-days for each Case Owner, broken down by Case Type. Include how to change
-the value field from Sum to Average, and how to round the displayed numbers
-to one decimal place.
+design a pivot table showing the AVERAGE TAT (Days) for each Case Owner (rows) broken down by
+Case Type (columns). Give me the field placement, click-by-click steps, how to switch the
+value from Count to Average, and the expected row totals.
 ```
-### Step 2 — Apply (Excel)
-1. **Insert → PivotTable** again → New Worksheet
-2. **Rows:** Case Owner | **Columns:** Case Type | **Values:** TAT (Days)
-3. Click the value field → **Value Field Settings → Average**
-4. Same dialog → **Number Format → Number → 1 decimal place**
 
-### No-Pivot Alternative
-```
-Give me an AVERAGEIFS formula for the average TAT for a given Case Owner and
-Case Type.
-```
-`=AVERAGEIFS($L$3:$L$27,$I$3:$I$27,$V3,$E$3:$E$27,W$2)` — a quick grid without a pivot.
+### Step 4 — Build it in Excel
+1. Select **A2:T27** → **Insert → PivotTable → New Worksheet**.
+2. Place the fields:
+   - **Case Owner** → Rows
+   - **Case Type** → Columns
+   - **TAT (Days)** → Values
+3. Excel may default the value to **Count** because the column contains blanks. To change it:
+   - Click the value field → **Value Field Settings → Average → OK**.
+   - Blank rows (open cases) are ignored in the average.
 
-> **Discussion Point:** Which officer has the highest average TAT on Fraud Investigations? What might explain Priya Desai's TAT on this case type?
+### Step 5 — Verify (Grand Total column)
 
----
-
-## Exercise 8 — Bonus: Get Insights from Copilot Chat
-
-Chat cannot read your workbook — so **you bring the data to Chat.**
-
-### Step 1 — Copy from Excel
-Select **A2:T27** (headers plus all 25 rows) and press **Ctrl + C**.
-
-### Step 2 — Ask (Copilot Chat)
-Paste the data directly into the chat box, then add underneath:
-```
-Above is my full RCU case log, tab-separated, headers in the first row.
-Which branches have the most Critical and High risk cases? Which case owners
-have the highest proportion of Escalated cases? Summarise the top risk areas
-for the RCU team in 3 bullet points, and name the specific cases driving
-each risk.
-```
-### What to Expect
-Chat reads the pasted table and generates a natural-language insight summary — no formula involved. This is the shift from **calculation → analysis → insight**, the RCU team's daily workflow in compressed form.
-
-> ### ⚠️ Data Handling — Read This
-> This is a **synthetic training dataset**, safe to paste. RCU works with real applicant data every day — that is not.
-> - Only paste into **Copilot Chat signed in with your BFL work account** (look for the green "Protected" / enterprise data-protection indicator)
-> - Never paste applicant PII — **Applicant Names, PAN, loan amounts, contact details** — or anything under CAS / compliance restriction
-> - **De-identify first** — replace Applicant Names with Applicant-1, Applicant-2, drop the Loan Amount column, and paste only the fields the question actually needs
->
-> Pasting the *shape* of a problem is almost always enough. Pasting the *whole* problem rarely is. For a fraud-and-verification function, that discipline is not optional.
-
----
-
-## What Changes When You Get a Copilot Licence
-
-Keep this session's habits — they transfer. The licence removes the copy-paste, not the thinking.
-
-| | **Copilot Chat** *(today)* | **Copilot in Excel** *(licensed)* |
+| Case Owner | Average TAT (days) | Closed cases |
 |---|---|---|
-| Sees your workbook | ✗ — you describe it | ✓ — reads it directly |
-| Writes formulas | ✓ | ✓ |
-| **Inserts** formulas into cells | ✗ — you paste | ✓ automatic |
-| Builds PivotTables | ✗ — gives you the steps | ✓ builds them |
-| Analyses your data | ✓ — if you paste it in | ✓ — reads the sheet |
-| Formats, charts, highlights | ✗ | ✓ |
-| Explains any formula | ✓ | ✓ |
+| Priya Desai | 11 | 2 |
+| Sunita Rao | 11 | 1 |
+| Amit Kulkarni | 8.75 | 4 |
+| Neha Joshi | 6.67 | 3 |
+| Rahul Mehta | 6.25 | 4 |
+| Ravi Patil | 4.25 | 4 |
+| **Grand Total** | **7.22** | **18** |
 
-**The transferable skill:** describing your data clearly, stating the rule precisely, and checking the answer against a known number. Participants who build that habit here get more out of the licensed tool later than those who skip straight to it.
+> **Discussion Point:** Priya Desai's 11-day average is a 3-day case and a 19-day Fraud Investigation (RCU-021, Critical). Sunita Rao's 11 days rests on a single case. How many cases does an average need before you act on it? And is the fraud workload spread fairly across officers?
 
----
-
-## Quick Reference — Formulas You Built Today
-
-| Column | Label | Formula Logic |
-|--------|-------|---------------|
-| Q | Breach Flag | Pending if open / Breach if TAT > Benchmark / On Time otherwise |
-| R | Risk Score Band | Critical=4, High=3, Medium=2, Low=1 |
-| S | Pending Days | 0 if closed / Days since received if still open |
-| T | Resolution Category | Fast / Within TAT / Moderate Breach / Critical Breach / Pending |
+> 💡 **No pivot tables allowed on your machine?** Ask Copilot for the same result as a `COUNTIFS` / `AVERAGEIFS` formula grid instead. For example, `=AVERAGEIFS(L3:L27,I3:I27,"Rahul Mehta")` returns **6.25**.
 
 ---
 
-## Quick Reference — Prompt Patterns
+# Exercise 8 — Bonus: Ask Copilot for Insights
+**Time:** ~5 minutes
 
-| You want | Say this |
+This works directly in Copilot Chat with the file attached. No manual steps are needed.
+
+```
+Look at the RCU Case Log sheet in the attached file. Which branches have the most Critical
+and High risk cases? If branches are tied, group them by city (e.g. all "Mumbai …" branches
+together). Which case owners have the highest proportion of Escalated cases? Summarise the
+top risk areas for the RCU team in 3 bullet points, quoting Case IDs as evidence.
+```
+
+**Expected:**
+- **There are 9 High or Critical cases** (5 High, 4 Critical): RCU-002, 005, 006, 010, 013, 016, 019, 021 and 024.
+- **At branch level, nothing is ahead.** Every one of the 25 branches appears once, so the branch-level question has no single answer.
+- **By city:** **Mumbai 3** (Andheri, Dadar, Bandra), **Pune 3** (Kothrud, Wakad, Shivajinagar), then **Nashik 1**, **Solapur 1** and **Nagpur 1**.
+- **By zone:** 7 of the 9 are in the **West** zone and 2 in Central.
+- **Escalated proportion by owner:** Rahul Mehta, Priya Desai and Amit Kulkarni are tied at **1 of 4 (25%)**, Neha Joshi is **1 of 5 (20%)**, and Sunita Rao and Ravi Patil have none.
+
+> 💡 **Lesson:** if Copilot names one "top branch" or one "highest owner", check it against the data. A question that ends in a tie needs a better grouping, and here city works better than branch.
+
+---
+
+## Reference: What Your Results Should Show
+
+| Check | Expected |
 |---|---|
-| A formula | *"Write a formula for cell **X3** that…, ready to fill down to row 27"* |
-| It to handle blanks | *"…if the TAT in column L is blank, return 'Pending'. Check the blank first."* |
-| A text-to-number map | *"…map Critical to 4, High to 3, Medium to 2, Low to 1, anything else 0, from column O."* |
-| A simpler version | *"Rewrite this using IFS."* / *"Try it with SWITCH."* |
-| To understand it | *"Explain this formula in simple terms, part by part."* |
-| To fix a date error | *"This returns #VALUE!. My date in column J is text, not a real date. Fix it."* |
-| A pivot | *"Give me step-by-step instructions to build a PivotTable that… Tell me which field goes in which area."* |
-| A count / average without a pivot | *"Give me a COUNTIFS (or AVERAGEIFS) formula for … so I can build a summary grid."* |
-| Analysis on pasted data | *[paste the data]* + *"Above is my table, headers in the first row. Which…?"* |
+| Total cases | 25: 15 Cleared · 6 Pending · 4 Escalated |
+| Breach Flag | 13 Breach (11 West, 2 Central) · 5 On Time · 7 Pending |
+| Risk Score Band | 4 Critical (4) · 5 High (3) · 7 Medium (2) · 9 Low (1) · total score 54 |
+| Pending Days | 18 rows at 0 · 7 open cases, 131–138 days on 12 Oct 2026 |
+| Resolution Category | 5 Within TAT · 6 Moderate · 7 Critical · 7 Pending · 0 Fast |
+| Fraud Investigation | 6 cases: all 4 Escalated cases, and 5 of the 7 Critical Breaches |
+| Highest average TAT | Priya Desai, 11 days (2 cases); Sunita Rao, 11 days (1 case) |
+| Overall average TAT | 7.22 days across 18 closed cases |
+
+---
+
+## Agent vs Copilot Chat — What Changes
+
+| | Edit with Copilot (Agent) | Copilot Chat + Meta Prompt (this guide) |
+|---|---|---|
+| Licence | Microsoft 365 Copilot (paid) | Copilot Chat / Basic |
+| Writes formula into cells | ✅ Automatic | ✍️ You paste and fill down |
+| Builds pivot table | ✅ Automatic | ✍️ You build it using Copilot's layout |
+| Explains formulas, gives insights | ✅ | ✅ Same |
+| Handles errors | Agent retries | You paste the error back and ask for a fix |
+| What you learn | Prompting | Prompting **plus** checking the formula logic yourself |
+
+---
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| Formula refers to row 2 or the wrong column | Remind Copilot: *"Headers are row 2, data starts row 3."* |
+| `#VALUE!` in Pending Days | This is the text-date issue. See Exercise 3. |
+| `#NAME?` after pasting | Curly quotes crept in. Retype the `"` characters in Excel. |
+| Pivot shows *Count* instead of *Average* | Change it in **Value Field Settings → Average**. |
+| Pivot includes the title or note text | Rebuild it from **A2:T27** only. |
+| Copilot says it can't open the file | Re-attach it from OneDrive, or paste the relevant rows as text. |
+| Copilot mixes up the two "Pending" meanings | Status = Pending is a column P value (6 cases). Breach Flag = Pending means TAT is blank (7 cases). |
+
+---
+
+## Further Reading
+
+- [Microsoft Copilot overview: Basic vs Premium experiences](https://learn.microsoft.com/en-us/copilot/overview)
+- [Microsoft 365 Copilot overview: in-app features for Basic](https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-overview)
+- [Microsoft 365 Copilot release notes: Edit with Copilot in Excel](https://learn.microsoft.com/en-us/microsoft-365/copilot/release-notes)
 
 ---
 
 *Bajaj Finance Limited | AI Academy — Risk Containment Unit (RCU) | Microsoft Copilot Training Programme*
-*Technizer India*
+*Training delivered by **Technizer India***
